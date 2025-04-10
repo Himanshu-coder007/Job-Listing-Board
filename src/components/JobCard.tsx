@@ -1,6 +1,9 @@
+// components/JobCard.tsx
 import { FaMapMarkerAlt, FaRupeeSign, FaBriefcase, FaBuilding, FaClock, FaGraduationCap } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 interface JobCardProps {
+  id: number;
   title: string;
   company: string;
   location: string;
@@ -11,7 +14,13 @@ interface JobCardProps {
   skills: string[];
 }
 
-const JobCard = ({ title, company, location, salary, experience, type, posted, skills }: JobCardProps) => {
+const JobCard = ({ id, title, company, location, salary, experience, type, posted, skills }: JobCardProps) => {
+  const navigate = useNavigate();
+  
+  const handleViewDetails = () => {
+    navigate(`/job-details/${id}`);
+  };
+
   // Consistent light blue color scheme for all cards
   const cardColor = 'bg-blue-50';
   const typeColor = 'bg-blue-200 text-blue-800';
@@ -71,7 +80,10 @@ const JobCard = ({ title, company, location, salary, experience, type, posted, s
       </div>
 
       <div className="mt-6 flex justify-between items-center">
-        <button className={`font-medium hover:underline ${textColor}`}>
+        <button 
+          onClick={handleViewDetails}
+          className={`font-medium hover:underline ${textColor}`}
+        >
           View Details
         </button>
         <button className={`px-4 py-2 rounded-lg hover:opacity-90 transition-colors ${buttonColor}`}>

@@ -1,4 +1,4 @@
-// pages/Home.js
+// pages/Home.tsx
 import Navbar from '../components/Navbar';
 import FilterSidebar from '../components/FilterSidebar';
 import JobCard from '../components/JobCard';
@@ -22,8 +22,8 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {jobData.map((job, index) => (
-              <JobCard key={index} {...job} />
+            {jobData.map((job) => (
+              <JobCard key={job.id} {...job} />
             ))}
           </div>
         </div>
