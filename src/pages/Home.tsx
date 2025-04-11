@@ -25,7 +25,6 @@ const Home = () => {
     locationQuery: '',
     experiences: [] as number[],
     salary: 0,
-    salaryFrequency: 'per month',
     jobTypes: [] as string[],
   });
 
@@ -53,7 +52,6 @@ const Home = () => {
     // Filter by experience
     if (filters.experiences.length > 0) {
       results = results.filter(job => {
-        // Extract min and max experience from job listing
         const [minExpStr, maxExpStr] = job.experience.split('-').map(exp => 
           exp.replace('+', '').replace(' years', '').replace(' year', '').trim()
         );
@@ -61,19 +59,16 @@ const Home = () => {
         const minExp = minExpStr ? parseInt(minExpStr) : 0;
         const maxExp = maxExpStr ? parseInt(maxExpStr) : minExp;
         
-        // Check if any selected experience range matches the job's experience
         return filters.experiences.some(exp => {
-          // For 5+ years filter, we check if job's min experience is >=5
           if (exp === 5) {
             return minExp >= 5;
           }
-          // For other filters, we check if the job's experience range includes the selected value
           return exp >= minExp && exp <= (maxExp || minExp);
         });
       });
     }
 
-    // Filter by salary
+    // Filter by salary (using slider value)
     if (filters.salary > 0) {
       results = results.filter(job => {
         const salaryParts = job.salary
@@ -83,21 +78,10 @@ const Home = () => {
           .map(s => parseInt(s.trim()));
         
         const minSalary = salaryParts[0];
-        const maxSalary = salaryParts.length > 1 ? salaryParts[1] : minSalary;
-
-        // Convert to monthly if needed for comparison
-        let jobSalary;
-        if (job.duration.includes('Year') || job.duration.includes('Annual')) {
-          jobSalary = filters.salaryFrequency === 'per month' 
-            ? Math.floor((minSalary + maxSalary) / 2 / 12)
-            : (minSalary + maxSalary) / 2;
-        } else {
-          jobSalary = filters.salaryFrequency === 'per month'
-            ? (minSalary + maxSalary) / 2
-            : ((minSalary + maxSalary) / 2) * 12;
-        }
-
-        return jobSalary <= filters.salary;
+        
+        
+        // Compare with the minimum salary threshold from slider
+        return minSalary >= filters.salary;
       });
     }
 
@@ -117,8 +101,8 @@ const Home = () => {
     setFilters(prev => ({ ...prev, locationQuery: location }));
   };
 
-  const handleSalaryChange = (salary: number, frequency: string) => {
-    setFilters(prev => ({ ...prev, salary, salaryFrequency: frequency }));
+  const handleSalaryChange = (salary: number) => {
+    setFilters(prev => ({ ...prev, salary }));
   };
 
   const handleExperienceChange = (experiences: number[]) => {
@@ -137,7 +121,6 @@ const Home = () => {
         onSalaryChange={handleSalaryChange}
       />
       <div className="container mx-auto px-4 flex">
-        {/* Sidebar - fixed width */}
         <div className="w-64 pr-4 fixed top-20 h-[calc(100vh-5rem)] overflow-y-auto">
           <FilterSidebar
             onExperienceChange={handleExperienceChange}
@@ -145,7 +128,6 @@ const Home = () => {
           />
         </div>
 
-        {/* Main Content - with left margin to account for fixed sidebar */}
         <div className="ml-64 w-[calc(100%-16rem)] pl-4 py-5">
           <div className="mb-6">
             <h1 className="text-2xl font-bold text-gray-800">Recommended Jobs</h1>
