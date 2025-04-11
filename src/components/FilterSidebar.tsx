@@ -5,7 +5,10 @@ interface FilterSidebarProps {
   onJobTypeChange: (types: string[]) => void;
 }
 
-const FilterSidebar = ({ onExperienceChange, onJobTypeChange }: FilterSidebarProps) => {
+const FilterSidebar = ({
+  onExperienceChange,
+  onJobTypeChange,
+}: FilterSidebarProps) => {
   const [selectedExperiences, setSelectedExperiences] = useState<number[]>([]);
   const [selectedJobTypes, setSelectedJobTypes] = useState<string[]>([]);
 
@@ -15,15 +18,21 @@ const FilterSidebar = ({ onExperienceChange, onJobTypeChange }: FilterSidebarPro
     { label: "2 years", value: 2 },
     { label: "3 years", value: 3 },
     { label: "4 years", value: 4 },
-    { label: "5+ years", value: 5 }
+    { label: "5+ years", value: 5 },
   ];
 
-  const jobTypes = ["Full-time", "Part-time", "Contract", "Internship", "Remote"];
+  const jobTypes = [
+    "Full-time",
+    "Part-time",
+    "Contract",
+    "Internship",
+    "Remote",
+  ];
 
   const handleJobTypeChange = (type: string) => {
     let newSelectedTypes;
     if (selectedJobTypes.includes(type)) {
-      newSelectedTypes = selectedJobTypes.filter(t => t !== type);
+      newSelectedTypes = selectedJobTypes.filter((t) => t !== type);
     } else {
       newSelectedTypes = [...selectedJobTypes, type];
     }
@@ -34,7 +43,7 @@ const FilterSidebar = ({ onExperienceChange, onJobTypeChange }: FilterSidebarPro
   const handleExperienceChange = (value: number) => {
     let newSelectedExperiences;
     if (selectedExperiences.includes(value)) {
-      newSelectedExperiences = selectedExperiences.filter(v => v !== value);
+      newSelectedExperiences = selectedExperiences.filter((v) => v !== value);
     } else {
       newSelectedExperiences = [...selectedExperiences, value];
     }
@@ -44,8 +53,6 @@ const FilterSidebar = ({ onExperienceChange, onJobTypeChange }: FilterSidebarPro
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md h-[calc(100vh-5rem)] overflow-y-auto top-10">
-      <h3 className="text-lg font-bold mb-4 text-gray-800">Filters</h3>
-
       <div className="mb-6">
         <h4 className="font-medium mb-2 text-gray-700">Experience</h4>
         <div className="space-y-2">
