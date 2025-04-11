@@ -1,18 +1,68 @@
-// pages/JobDetails.tsx
 import { useParams } from 'react-router-dom';
 import { FaMapMarkerAlt, FaRupeeSign, FaBriefcase, FaBuilding, FaClock, FaGraduationCap } from 'react-icons/fa';
 import jobData from '../data/jobData.json';
+import { useState } from 'react';
+import ApplicationForm from '../components/ApplicationForm';
+
+interface Application {
+  jobId: number;
+  name: string;
+  email: string;
+  phone: string;
+  resume: File | null;
+  coverLetter: string;
+  appliedDate: string;
+}
 
 const JobDetails = () => {
   const { id } = useParams<{ id: string }>();
   const job = jobData[Number(id)];
+  const [showForm, setShowForm] = useState(false);
+
+  // Check if already applied
+  const applications = JSON.parse(localStorage.getItem('applications') || '[]');
+  const hasApplied = applications.some((app: Application) => app.jobId === Number(id));
 
   if (!job) {
     return <div className="pt-20 text-center">Job not found</div>;
   }
 
+  const handleApplyClick = () => {
+    setShowForm(true);
+  };
+
+  const handleFormSubmit = (formData: {
+    name: string;
+    email: string;
+    phone: string;
+    resume: File | null;
+    coverLetter: string;
+  }) => {
+    const newApplication: Application = {
+      jobId: Number(id),
+      ...formData,
+      appliedDate: new Date().toISOString()
+    };
+    
+    const updatedApplications = [...applications, newApplication];
+    localStorage.setItem('applications', JSON.stringify(updatedApplications));
+    
+    setShowForm(false);
+    alert('Application submitted successfully!');
+    window.location.reload(); // Refresh to update button state
+  };
+
   return (
-    <div className="pt-20 bg-blue-50 min-h-screen"> {/* Added bg-blue-50 and min-h-screen */}
+    <div className="pt-20 bg-blue-50 min-h-screen">
+      {showForm && (
+        <ApplicationForm 
+          onClose={() => setShowForm(false)}
+          onSubmit={handleFormSubmit}
+          jobTitle={job.title}
+          company={job.company}
+        />
+      )}
+      
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="bg-white rounded-lg shadow-lg p-8">
           <div className="flex justify-between items-start mb-6">
@@ -95,9 +145,21 @@ const JobDetails = () => {
             <button className="px-6 py-3 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors">
               Save Job
             </button>
-            <button className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-              Apply Now
-            </button>
+            {hasApplied ? (
+              <button 
+                className="px-6 py-3 bg-gray-400 text-white rounded-lg cursor-not-allowed"
+                disabled
+              >
+                Already Applied
+              </button>
+            ) : (
+              <button 
+                onClick={handleApplyClick}
+                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Apply Now
+              </button>
+            )}
           </div>
         </div>
       </div>
