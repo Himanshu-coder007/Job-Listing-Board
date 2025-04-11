@@ -1,6 +1,7 @@
 // components/Navbar.tsx
-import { FaSearch, FaMapMarkerAlt, FaRupeeSign } from 'react-icons/fa';
+import { FaSearch, FaMapMarkerAlt, FaRupeeSign, FaBookmark, FaClipboardList } from 'react-icons/fa';
 import { useState, ChangeEvent } from 'react';
+import { Link } from 'react-router-dom';
 
 interface NavbarProps {
   onSearch: (query: string) => void;
@@ -40,49 +41,68 @@ const Navbar = ({ onSearch, onLocationChange, onSalaryChange }: NavbarProps) => 
 
   return (
     <nav className="bg-gray-800 text-white p-4 fixed top-0 left-0 right-0 z-10">
-      <div className="container mx-auto flex flex-col md:flex-row items-center gap-4">
-        <div className="text-xl font-bold mr-40">JobPortal</div>
+      <div className="container mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <div className="text-xl font-bold mr-30">JobPortal</div> {/* Added mr-8 for right margin */}
 
-        <div className="relative w-64"> {/* Reduced width from flex-grow to w-64 */}
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <FaSearch className="text-gray-400" />
+          <div className="relative w-64">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <FaSearch className="text-gray-400" />
+            </div>
+            <input
+              type="text"
+              placeholder="Search job title"
+              className="w-full pl-10 pr-4 py-2 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
           </div>
-          <input
-            type="text"
-            placeholder="Search job title"
-            className="w-full pl-10 pr-4 py-2 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={searchQuery}
-            onChange={handleSearchChange}
-          />
+
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <FaMapMarkerAlt className="text-gray-400" />
+            </div>
+            <input
+              type="text"
+              placeholder="Work Location"
+              className="pl-10 pr-4 py-2 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={locationQuery}
+              onChange={handleLocationChange}
+            />
+          </div>
+
+          <div className="relative flex items-center gap-2 w-48">
+            <FaRupeeSign className="text-gray-400" />
+            <input
+              type="range"
+              min="0"
+              max="5000000"
+              step="100000"
+              value={salary}
+              onChange={handleSalaryChange}
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+            />
+            <span className="text-sm whitespace-nowrap">
+              {salary === 0 ? 'Any salary' : `Min: ${formatSalary(salary)}`}
+            </span>
+          </div>
         </div>
 
-        <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <FaMapMarkerAlt className="text-gray-400" />
-          </div>
-          <input
-            type="text"
-            placeholder="Work Location"
-            className="pl-10 pr-4 py-2 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={locationQuery}
-            onChange={handleLocationChange}
-          />
-        </div>
-
-        <div className="relative flex items-center gap-2 w-48">
-          <FaRupeeSign className="text-gray-400" />
-          <input
-            type="range"
-            min="0"
-            max="5000000"
-            step="100000"
-            value={salary}
-            onChange={handleSalaryChange}
-            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-          />
-          <span className="text-sm whitespace-nowrap">
-            {salary === 0 ? 'Any salary' : `Min: ${formatSalary(salary)}`}
-          </span>
+        <div className="flex items-center gap-4">
+          <Link 
+            to="/saved-jobs" 
+            className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
+          >
+            <FaBookmark />
+            <span>Saved Jobs</span>
+          </Link>
+          <Link 
+            to="/applications" 
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+          >
+            <FaClipboardList />
+            <span>Applications</span>
+          </Link>
         </div>
       </div>
     </nav>

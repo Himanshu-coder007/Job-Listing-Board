@@ -1,3 +1,4 @@
+// src/pages/JobDetails.tsx
 import { useParams } from 'react-router-dom';
 import { FaMapMarkerAlt, FaRupeeSign, FaBriefcase, FaBuilding, FaClock, FaGraduationCap } from 'react-icons/fa';
 import jobData from '../data/jobData.json';
@@ -22,6 +23,10 @@ const JobDetails = () => {
   // Check if already applied
   const applications = JSON.parse(localStorage.getItem('applications') || '[]');
   const hasApplied = applications.some((app: Application) => app.jobId === Number(id));
+
+  // Check if job is saved
+  const savedJobs = JSON.parse(localStorage.getItem('savedJobs') || '[]');
+  const isSaved = savedJobs.includes(Number(id));
 
   if (!job) {
     return <div className="pt-20 text-center">Job not found</div>;
@@ -49,7 +54,18 @@ const JobDetails = () => {
     
     setShowForm(false);
     alert('Application submitted successfully!');
-    window.location.reload(); // Refresh to update button state
+    window.location.reload();
+  };
+
+  const handleSaveJob = () => {
+    let updatedSavedJobs;
+    if (isSaved) {
+      updatedSavedJobs = savedJobs.filter((jobId: number) => jobId !== Number(id));
+    } else {
+      updatedSavedJobs = [...savedJobs, Number(id)];
+    }
+    localStorage.setItem('savedJobs', JSON.stringify(updatedSavedJobs));
+    window.location.reload();
   };
 
   return (
@@ -142,8 +158,15 @@ const JobDetails = () => {
           </div>
 
           <div className="flex justify-end space-x-4">
-            <button className="px-6 py-3 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors">
-              Save Job
+            <button 
+              onClick={handleSaveJob}
+              className={`px-6 py-3 border rounded-lg transition-colors ${
+                isSaved 
+                  ? 'bg-green-100 border-green-500 text-green-700 hover:bg-green-200'
+                  : 'border-blue-600 text-blue-600 hover:bg-blue-50'
+              }`}
+            >
+              {isSaved ? 'Saved' : 'Save Job'}
             </button>
             {hasApplied ? (
               <button 
