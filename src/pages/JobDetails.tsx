@@ -147,7 +147,7 @@ const JobDetails = () => {
             </button>
             {hasApplied ? (
               <button 
-                className="px-6 py-3 bg-gray-400 text-white rounded-lg cursor-not-allowed"
+                className="px-6 py-3 bg-green-400 text-white rounded-lg cursor-not-allowed"
                 disabled
               >
                 Already Applied
