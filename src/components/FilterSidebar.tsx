@@ -2,28 +2,7 @@ import { useState } from "react";
 
 const FilterSidebar = () => {
   const [experience, setExperience] = useState<number>(0);
-  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
 
-  const skills = [
-    "JavaScript",
-    "TypeScript",
-    "React",
-    "Node.js",
-    "Python",
-    "Java",
-    "SQL",
-    "AWS",
-    "Docker",
-    "Kubernetes",
-  ];
-
-  const toggleSkill = (skill: string) => {
-    if (selectedSkills.includes(skill)) {
-      setSelectedSkills(selectedSkills.filter((s) => s !== skill));
-    } else {
-      setSelectedSkills([...selectedSkills, skill]);
-    }
-  };
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md h-[calc(100vh)] overflow-y-auto sticky top-20">
