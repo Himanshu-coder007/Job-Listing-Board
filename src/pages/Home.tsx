@@ -23,7 +23,7 @@ const Home = () => {
   const [filters, setFilters] = useState({
     searchQuery: '',
     locationQuery: '',
-    minExperience: 0,
+    experiences: [] as number[],
     salary: 0,
     salaryFrequency: 'per month',
     jobTypes: [] as string[],
@@ -51,13 +51,27 @@ const Home = () => {
     }
 
     // Filter by experience
-    results = results.filter(job => {
-      const [minExp, maxExp] = job.experience.split('-').map(exp => {
-        const num = parseInt(exp.replace('+', '').replace(' years', '').trim());
-        return isNaN(num) ? 0 : num;
+    if (filters.experiences.length > 0) {
+      results = results.filter(job => {
+        // Extract min and max experience from job listing
+        const [minExpStr, maxExpStr] = job.experience.split('-').map(exp => 
+          exp.replace('+', '').replace(' years', '').replace(' year', '').trim()
+        );
+        
+        const minExp = minExpStr ? parseInt(minExpStr) : 0;
+        const maxExp = maxExpStr ? parseInt(maxExpStr) : minExp;
+        
+        // Check if any selected experience range matches the job's experience
+        return filters.experiences.some(exp => {
+          // For 5+ years filter, we check if job's min experience is >=5
+          if (exp === 5) {
+            return minExp >= 5;
+          }
+          // For other filters, we check if the job's experience range includes the selected value
+          return exp >= minExp && exp <= (maxExp || minExp);
+        });
       });
-      return maxExp ? filters.minExperience <= maxExp : filters.minExperience <= minExp;
-    });
+    }
 
     // Filter by salary
     if (filters.salary > 0) {
@@ -107,8 +121,8 @@ const Home = () => {
     setFilters(prev => ({ ...prev, salary, salaryFrequency: frequency }));
   };
 
-  const handleExperienceChange = (experience: number) => {
-    setFilters(prev => ({ ...prev, minExperience: experience }));
+  const handleExperienceChange = (experiences: number[]) => {
+    setFilters(prev => ({ ...prev, experiences }));
   };
 
   const handleJobTypeChange = (types: string[]) => {
@@ -123,16 +137,16 @@ const Home = () => {
         onSalaryChange={handleSalaryChange}
       />
       <div className="container mx-auto px-4 flex">
-        {/* Sidebar - 15% width */}
-        <div className="w-1/5 pr-4 sticky top-20 h-screen overflow-y-auto">
+        {/* Sidebar - fixed width */}
+        <div className="w-64 pr-4 fixed top-20 h-[calc(100vh-5rem)] overflow-y-auto">
           <FilterSidebar
             onExperienceChange={handleExperienceChange}
             onJobTypeChange={handleJobTypeChange}
           />
         </div>
 
-        {/* Main Content - 85% width */}
-        <div className="w-4/5 pl-4 py-5">
+        {/* Main Content - with left margin to account for fixed sidebar */}
+        <div className="ml-64 w-[calc(100%-16rem)] pl-4 py-5">
           <div className="mb-6">
             <h1 className="text-2xl font-bold text-gray-800">Recommended Jobs</h1>
             <p className="text-gray-600">
